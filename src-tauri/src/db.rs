@@ -142,3 +142,69 @@ pub async fn get_sessions(
 fn stringify<E: std::fmt::Display>(err: E) -> String {
     err.to_string()
 }
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct StatsSummary {
+    pub today_secs: i64,
+    pub week_secs: i64,
+    pub total_secs: i64,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DailyFocus {
+    pub day: String,
+    pub secs: i64,
+}
+
+#[tauri::command]
+pub async fn get_stats_summary(db: State<'_, Db>) -> Result<StatsSummary, String> {
+    let row = sqlx::query(
+        "SELECT
+           COALESCE(SUM(CASE WHEN DATE(started_at, 'localtime') = DATE('now', 'localtime')
+                             THEN actual_secs END), 0) AS today,
+           COALESCE(SUM(CASE WHEN DATE(started_at, 'localtime') >= DATE('now', 'localtime', '-6 days')
+                             THEN actual_secs END), 0) AS week,
+           COALESCE(SUM(actual_secs), 0) AS total
+         FROM sessions
+         WHERE kind = 'focus'",
+    )
+    .fetch_one(&db.0)
+    .await
+    .map_err(stringify)?;
+
+    Ok(StatsSummary {
+        today_secs: row.get("today"),
+        week_secs: row.get("week"),
+        total_secs: row.get("total"),
+    })
+}
+
+#[tauri::command]
+pub async fn get_focus_per_day(
+    db: State<'_, Db>,
+    days: i64,
+) -> Result<Vec<DailyFocus>, String> {
+    let offset = format!("-{} days", days.max(1) - 1);
+    let rows = sqlx::query(
+        "SELECT DATE(started_at, 'localtime') AS day, SUM(actual_secs) AS secs
+         FROM sessions
+         WHERE kind = 'focus'
+           AND DATE(started_at, 'localtime') >= DATE('now', 'localtime', ?1)
+         GROUP BY day
+         ORDER BY day ASC",
+    )
+    .bind(&offset)
+    .fetch_all(&db.0)
+    .await
+    .map_err(stringify)?;
+
+    Ok(rows
+        .into_iter()
+        .map(|row| DailyFocus {
+            day: row.get("day"),
+            secs: row.get("secs"),
+        })
+        .collect())
+}

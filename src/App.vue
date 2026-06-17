@@ -1,18 +1,38 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import TimerView from './views/TimerView.vue'
+import StatsView from './views/StatsView.vue'
 import { useTrayBridge } from './composables/useTrayBridge'
 import { useSessionRecorder } from './composables/useSessionRecorder'
 
+type ViewKey = 'timer' | 'stats'
+
 useTrayBridge()
 useSessionRecorder()
+
+const activeView = ref<ViewKey>('timer')
+const tabs: { key: ViewKey; label: string }[] = [
+  { key: 'timer', label: 'Timer' },
+  { key: 'stats', label: 'Stats' },
+]
 </script>
 
 <template>
   <main class="app">
-    <header class="app__header">
-      <h1>Foco</h1>
-    </header>
-    <TimerView />
+    <nav class="app__nav">
+      <button
+        v-for="tab in tabs"
+        :key="tab.key"
+        type="button"
+        class="app__tab"
+        :class="{ 'app__tab--active': activeView === tab.key }"
+        @click="activeView = tab.key"
+      >
+        {{ tab.label }}
+      </button>
+    </nav>
+    <TimerView v-if="activeView === 'timer'" />
+    <StatsView v-else />
   </main>
 </template>
 
@@ -50,19 +70,37 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
 }
 
-.app__header {
-  padding: 1.5rem 0 0.5rem;
+.app__nav {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem 0;
+  justify-content: center;
 }
 
-.app__header h1 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 500;
-  letter-spacing: 0.25em;
+.app__tab {
+  font: inherit;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  opacity: 0.7;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: inherit;
+  opacity: 0.55;
+  cursor: pointer;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.app__tab:hover {
+  opacity: 0.85;
+}
+
+.app__tab--active {
+  opacity: 1;
+  background: color-mix(in srgb, currentColor 10%, transparent);
 }
 </style>

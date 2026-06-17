@@ -16,6 +16,8 @@ pub fn run() {
             commands::set_tray_title,
             db::record_session,
             db::get_sessions,
+            db::get_stats_summary,
+            db::get_focus_per_day,
         ])
         .setup(|app| {
             #[cfg(target_os = "macos")]
