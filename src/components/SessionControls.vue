@@ -77,21 +77,11 @@ const primaryLabel = computed(() => {
 }
 
 .controls__btn--primary {
-  background: currentColor;
-  border-color: currentColor;
   padding: 0.7rem 2rem;
   font-weight: 600;
-}
-
-.controls__btn--primary span,
-.controls__btn--primary {
-  color: inherit;
-}
-
-.controls__btn--primary {
-  color: var(--btn-fg, #fff);
-  background: var(--btn-bg, #111);
-  border-color: var(--btn-bg, #111);
+  color: var(--btn-fg);
+  background: var(--btn-bg);
+  border-color: var(--btn-bg);
 }
 
 .controls__btn--primary:hover {

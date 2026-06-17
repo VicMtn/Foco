@@ -12,7 +12,7 @@ const phase = computed(() => kindLabel(timer.currentKind))
 </script>
 
 <template>
-  <section :class="['timer', `timer--${timer.currentKind}`]">
+  <section class="timer">
     <TimerRing :progress="timer.progress" :label="clock" :caption="phase" />
     <SessionControls
       :status="timer.status"
@@ -25,22 +25,15 @@ const phase = computed(() => kindLabel(timer.currentKind))
 
 <style scoped>
 .timer {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
-  padding: 3rem 2rem;
-}
-
-.timer--focus {
-  color: #d24d3a;
-}
-
-.timer--short_break {
-  color: #2f9e6c;
-}
-
-.timer--long_break {
-  color: #2f6ea5;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 0 2rem;
+  color: var(--accent);
 }
 </style>

@@ -24,7 +24,7 @@ defineProps<{
 }
 
 .streak--active {
-  color: #d24d3a;
+  color: var(--accent);
 }
 
 .streak__count {

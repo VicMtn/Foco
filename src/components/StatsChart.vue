@@ -28,7 +28,7 @@ const data = computed<ChartData<'bar'>>(() => ({
     {
       label: 'Focus (min)',
       data: props.points.map((p) => p.minutes),
-      backgroundColor: '#d24d3a',
+      backgroundColor: '#ce8147',
       borderRadius: 6,
       maxBarThickness: 22,
     },

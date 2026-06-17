@@ -81,6 +81,10 @@ const longBreakMinutes = minutesField(
 
 <style scoped>
 .settings {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -128,7 +132,7 @@ const longBreakMinutes = minutesField(
 }
 
 .settings__row input[type='checkbox'] {
-  accent-color: #d24d3a;
+  accent-color: var(--accent);
   width: 1rem;
   height: 1rem;
 }

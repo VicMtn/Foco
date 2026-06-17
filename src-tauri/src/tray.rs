@@ -19,8 +19,6 @@ pub fn setup<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<()> {
     )?;
 
     TrayIconBuilder::with_id(TRAY_ID)
-        .icon(app.default_window_icon().expect("missing window icon").clone())
-        .icon_as_template(true)
         .title("Foco")
         .menu(&menu)
         .show_menu_on_left_click(false)

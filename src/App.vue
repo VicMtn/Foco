@@ -46,36 +46,49 @@ const tabs: { key: ViewKey; label: string }[] = [
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
-  color: #111;
-  background-color: #f6f5f1;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --btn-bg: #111;
-  --btn-fg: #f6f5f1;
+  --graphite: #312f2f;
+  --cream: #edebd7;
+  --accent: #ce8147;
+  --surface: var(--cream);
+  --ink: var(--graphite);
+  --btn-bg: var(--graphite);
+  --btn-fg: var(--cream);
+  color: var(--ink);
 }
 
-body {
+html,
+body,
+#app {
   margin: 0;
+  height: 100vh;
+  background: transparent;
+  overflow: hidden;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    color: #f6f5f1;
-    background-color: #16161a;
-    --btn-bg: #f6f5f1;
-    --btn-fg: #16161a;
+    --surface: var(--graphite);
+    --ink: var(--cream);
+    --btn-bg: var(--cream);
+    --btn-fg: var(--graphite);
   }
 }
 </style>
 
 <style scoped>
 .app {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  background: var(--surface);
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  overflow: hidden;
 }
 
 .app__nav {
@@ -83,6 +96,7 @@ body {
   gap: 0.25rem;
   padding: 0.75rem 1rem 0;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .app__tab {
