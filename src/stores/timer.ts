@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import type { SessionKind, TimerStatus } from '../types/timer'
+import type { ConcludedSession, SessionKind, TimerStatus } from '../types/timer'
 import { useSettingsStore } from './settings'
 
 const TICK_MS = 250
@@ -12,6 +12,8 @@ export const useTimerStore = defineStore('timer', () => {
   const currentKind = ref<SessionKind>('focus')
   const completedFocusInCycle = ref(0)
   const remainingSecs = ref(settings.durationFor('focus'))
+  const startedAt = ref<string | null>(null)
+  const lastConcluded = ref<ConcludedSession | null>(null)
 
   let endsAt: number | null = null
   let intervalId: ReturnType<typeof setInterval> | null = null
@@ -30,13 +32,32 @@ export const useTimerStore = defineStore('timer', () => {
     endsAt = null
   }
 
+  function recordConclusion(completed: boolean) {
+    if (startedAt.value === null) return
+    const actualSecs = totalSecs.value - remainingSecs.value
+    if (actualSecs <= 0) {
+      startedAt.value = null
+      return
+    }
+    lastConcluded.value = {
+      kind: currentKind.value,
+      plannedSecs: totalSecs.value,
+      actualSecs,
+      startedAt: startedAt.value,
+      endedAt: new Date().toISOString(),
+      completed,
+    }
+    startedAt.value = null
+  }
+
   function tick() {
     if (endsAt === null) return
     const left = Math.max(0, Math.ceil((endsAt - Date.now()) / 1000))
     remainingSecs.value = left
     if (left === 0) {
       stopTicking()
-      completedFocusInCycle.value += currentKind.value === 'focus' ? 1 : 0
+      if (currentKind.value === 'focus') completedFocusInCycle.value += 1
+      recordConclusion(true)
       status.value = 'finished'
     }
   }
@@ -56,12 +77,9 @@ export const useTimerStore = defineStore('timer', () => {
 
   function start() {
     if (status.value === 'running') return
-    if (status.value === 'finished') {
-      advance()
-    }
-    if (remainingSecs.value <= 0) {
-      remainingSecs.value = totalSecs.value
-    }
+    if (status.value === 'finished') advance()
+    if (remainingSecs.value <= 0) remainingSecs.value = totalSecs.value
+    if (startedAt.value === null) startedAt.value = new Date().toISOString()
     endsAt = Date.now() + remainingSecs.value * 1000
     status.value = 'running'
     intervalId = setInterval(tick, TICK_MS)
@@ -80,19 +98,22 @@ export const useTimerStore = defineStore('timer', () => {
 
   function reset() {
     stopTicking()
+    startedAt.value = null
     remainingSecs.value = totalSecs.value
     status.value = 'idle'
   }
 
   function advance() {
     stopTicking()
-    if (currentKind.value === 'long_break') {
-      completedFocusInCycle.value = 0
-    }
+    startedAt.value = null
+    if (currentKind.value === 'long_break') completedFocusInCycle.value = 0
     loadKind(nextKind())
   }
 
   function skip() {
+    if (status.value === 'running' || status.value === 'paused') {
+      recordConclusion(false)
+    }
     advance()
   }
 
@@ -101,6 +122,7 @@ export const useTimerStore = defineStore('timer', () => {
     currentKind,
     remainingSecs,
     completedFocusInCycle,
+    lastConcluded,
     totalSecs,
     progress,
     start,

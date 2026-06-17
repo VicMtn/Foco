@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import TimerView from './views/TimerView.vue'
 import { useTrayBridge } from './composables/useTrayBridge'
+import { useSessionRecorder } from './composables/useSessionRecorder'
 
 useTrayBridge()
+useSessionRecorder()
 </script>
 
 <template>
