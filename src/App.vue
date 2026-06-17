@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import TimerView from './views/TimerView.vue'
+import { useTrayBridge } from './composables/useTrayBridge'
+
+useTrayBridge()
 </script>
 
 <template>

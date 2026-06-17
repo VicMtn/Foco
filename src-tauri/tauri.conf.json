@@ -12,9 +12,16 @@
   "app": {
     "windows": [
       {
-        "title": "foco",
-        "width": 800,
-        "height": 600
+        "label": "main",
+        "title": "Foco",
+        "width": 320,
+        "height": 440,
+        "decorations": false,
+        "resizable": false,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "visible": false,
+        "acceptFirstMouse": true
       }
     ],
     "security": {
