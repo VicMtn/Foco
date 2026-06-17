@@ -8,6 +8,7 @@ mod tray;
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             None,
@@ -18,6 +19,8 @@ pub fn run() {
             db::get_sessions,
             db::get_stats_summary,
             db::get_focus_per_day,
+            db::get_settings,
+            db::set_setting,
         ])
         .setup(|app| {
             #[cfg(target_os = "macos")]

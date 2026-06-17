@@ -2,18 +2,22 @@
 import { ref } from 'vue'
 import TimerView from './views/TimerView.vue'
 import StatsView from './views/StatsView.vue'
+import SettingsView from './views/SettingsView.vue'
 import { useTrayBridge } from './composables/useTrayBridge'
 import { useSessionRecorder } from './composables/useSessionRecorder'
+import { useSessionNotifier } from './composables/useSessionNotifier'
 
-type ViewKey = 'timer' | 'stats'
+type ViewKey = 'timer' | 'stats' | 'settings'
 
 useTrayBridge()
 useSessionRecorder()
+useSessionNotifier()
 
 const activeView = ref<ViewKey>('timer')
 const tabs: { key: ViewKey; label: string }[] = [
   { key: 'timer', label: 'Timer' },
   { key: 'stats', label: 'Stats' },
+  { key: 'settings', label: 'Settings' },
 ]
 </script>
 
@@ -32,7 +36,8 @@ const tabs: { key: ViewKey; label: string }[] = [
       </button>
     </nav>
     <TimerView v-if="activeView === 'timer'" />
-    <StatsView v-else />
+    <StatsView v-else-if="activeView === 'stats'" />
+    <SettingsView v-else />
   </main>
 </template>
 

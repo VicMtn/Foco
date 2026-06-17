@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { ConcludedSession, SessionKind, TimerStatus } from '../types/timer'
 import { useSettingsStore } from './settings'
 
@@ -116,6 +116,12 @@ export const useTimerStore = defineStore('timer', () => {
     }
     advance()
   }
+
+  watch(totalSecs, (next) => {
+    if (status.value === 'idle' || status.value === 'finished') {
+      remainingSecs.value = next
+    }
+  })
 
   return {
     status,

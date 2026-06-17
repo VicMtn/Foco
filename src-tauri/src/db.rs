@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::error::Error;
 use std::path::PathBuf;
 
@@ -18,6 +19,11 @@ CREATE TABLE IF NOT EXISTS sessions (
   label         TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_sessions_started_at ON sessions(started_at);
+
+CREATE TABLE IF NOT EXISTS settings (
+  key   TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+);
 "#;
 
 pub struct Db(pub SqlitePool);
@@ -179,6 +185,37 @@ pub async fn get_stats_summary(db: State<'_, Db>) -> Result<StatsSummary, String
         week_secs: row.get("week"),
         total_secs: row.get("total"),
     })
+}
+
+#[tauri::command]
+pub async fn get_settings(db: State<'_, Db>) -> Result<HashMap<String, String>, String> {
+    let rows = sqlx::query("SELECT key, value FROM settings")
+        .fetch_all(&db.0)
+        .await
+        .map_err(stringify)?;
+
+    Ok(rows
+        .into_iter()
+        .map(|row| (row.get::<String, _>("key"), row.get::<String, _>("value")))
+        .collect())
+}
+
+#[tauri::command]
+pub async fn set_setting(
+    db: State<'_, Db>,
+    key: String,
+    value: String,
+) -> Result<(), String> {
+    sqlx::query(
+        "INSERT INTO settings (key, value) VALUES (?1, ?2)
+         ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+    )
+    .bind(&key)
+    .bind(&value)
+    .execute(&db.0)
+    .await
+    .map_err(stringify)?;
+    Ok(())
 }
 
 #[tauri::command]
