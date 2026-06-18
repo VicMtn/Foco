@@ -88,6 +88,17 @@ const longBreakMinutes = minutesField(
         <input v-model="autostart.enabled" type="checkbox" :disabled="!autostart.ready" />
       </label>
     </fieldset>
+
+    <fieldset class="settings__group">
+      <legend>Eye Care</legend>
+      <label class="settings__row settings__row--toggle">
+        <span>20-20-20 rule</span>
+        <input v-model="settings.developerMode" type="checkbox" />
+      </label>
+      <p class="settings__hint">
+        Every 20 min of focus, look ~20ft (6m) away for 20s to rest your eyes.
+      </p>
+    </fieldset>
   </section>
 </template>
 
@@ -152,5 +163,12 @@ const longBreakMinutes = minutesField(
 .settings__unit {
   font-size: 0.75rem;
   opacity: 0.6;
+}
+
+.settings__hint {
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  opacity: 0.65;
 }
 </style>

@@ -14,6 +14,7 @@ const DEFAULTS = {
   notificationsEnabled: true,
   autoStartFocus: false,
   autoStartBreak: false,
+  developerMode: false,
 }
 
 export const useSettingsStore = defineStore('settings', () => {
@@ -25,6 +26,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const notificationsEnabled = ref(DEFAULTS.notificationsEnabled)
   const autoStartFocus = ref(DEFAULTS.autoStartFocus)
   const autoStartBreak = ref(DEFAULTS.autoStartBreak)
+  const developerMode = ref(DEFAULTS.developerMode)
   const ready = ref(false)
 
   function durationFor(kind: SessionKind): number {
@@ -48,6 +50,7 @@ export const useSettingsStore = defineStore('settings', () => {
     notificationsEnabled.value = readBool(stored, 'notificationsEnabled', DEFAULTS.notificationsEnabled)
     autoStartFocus.value = readBool(stored, 'autoStartFocus', DEFAULTS.autoStartFocus)
     autoStartBreak.value = readBool(stored, 'autoStartBreak', DEFAULTS.autoStartBreak)
+    developerMode.value = readBool(stored, 'developerMode', DEFAULTS.developerMode)
     ready.value = true
   }
 
@@ -59,6 +62,7 @@ export const useSettingsStore = defineStore('settings', () => {
   watchPersistableBool('notificationsEnabled', notificationsEnabled, ready)
   watchPersistableBool('autoStartFocus', autoStartFocus, ready)
   watchPersistableBool('autoStartBreak', autoStartBreak, ready)
+  watchPersistableBool('developerMode', developerMode, ready)
 
   return {
     focusSecs,
@@ -69,6 +73,7 @@ export const useSettingsStore = defineStore('settings', () => {
     notificationsEnabled,
     autoStartFocus,
     autoStartBreak,
+    developerMode,
     ready,
     durationFor,
     load,

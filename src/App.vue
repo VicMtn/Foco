@@ -6,12 +6,14 @@ import SettingsView from './views/SettingsView.vue'
 import { useTrayBridge } from './composables/useTrayBridge'
 import { useSessionRecorder } from './composables/useSessionRecorder'
 import { useSessionNotifier } from './composables/useSessionNotifier'
+import { useEyeCare } from './composables/useEyeCare'
 
 type ViewKey = 'timer' | 'stats' | 'settings'
 
 useTrayBridge()
 useSessionRecorder()
 useSessionNotifier()
+useEyeCare()
 
 const activeView = ref<ViewKey>('timer')
 const tabs: { key: ViewKey; label: string }[] = [
@@ -81,6 +83,7 @@ body,
 
 <style scoped>
 .app {
+  position: relative;
   height: 100vh;
   display: flex;
   flex-direction: column;
