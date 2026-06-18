@@ -12,6 +12,8 @@ const DEFAULTS = {
   cyclesBeforeLongBreak: 4,
   soundEnabled: true,
   notificationsEnabled: true,
+  autoStartFocus: false,
+  autoStartBreak: false,
 }
 
 export const useSettingsStore = defineStore('settings', () => {
@@ -21,6 +23,8 @@ export const useSettingsStore = defineStore('settings', () => {
   const cyclesBeforeLongBreak = ref(DEFAULTS.cyclesBeforeLongBreak)
   const soundEnabled = ref(DEFAULTS.soundEnabled)
   const notificationsEnabled = ref(DEFAULTS.notificationsEnabled)
+  const autoStartFocus = ref(DEFAULTS.autoStartFocus)
+  const autoStartBreak = ref(DEFAULTS.autoStartBreak)
   const ready = ref(false)
 
   function durationFor(kind: SessionKind): number {
@@ -42,6 +46,8 @@ export const useSettingsStore = defineStore('settings', () => {
     cyclesBeforeLongBreak.value = readInt(stored, 'cyclesBeforeLongBreak', DEFAULTS.cyclesBeforeLongBreak)
     soundEnabled.value = readBool(stored, 'soundEnabled', DEFAULTS.soundEnabled)
     notificationsEnabled.value = readBool(stored, 'notificationsEnabled', DEFAULTS.notificationsEnabled)
+    autoStartFocus.value = readBool(stored, 'autoStartFocus', DEFAULTS.autoStartFocus)
+    autoStartBreak.value = readBool(stored, 'autoStartBreak', DEFAULTS.autoStartBreak)
     ready.value = true
   }
 
@@ -51,6 +57,8 @@ export const useSettingsStore = defineStore('settings', () => {
   watchPersistableNumber('cyclesBeforeLongBreak', cyclesBeforeLongBreak, ready)
   watchPersistableBool('soundEnabled', soundEnabled, ready)
   watchPersistableBool('notificationsEnabled', notificationsEnabled, ready)
+  watchPersistableBool('autoStartFocus', autoStartFocus, ready)
+  watchPersistableBool('autoStartBreak', autoStartBreak, ready)
 
   return {
     focusSecs,
@@ -59,6 +67,8 @@ export const useSettingsStore = defineStore('settings', () => {
     cyclesBeforeLongBreak,
     soundEnabled,
     notificationsEnabled,
+    autoStartFocus,
+    autoStartBreak,
     ready,
     durationFor,
     load,

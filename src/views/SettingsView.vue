@@ -58,6 +58,18 @@ const longBreakMinutes = minutesField(
     </fieldset>
 
     <fieldset class="settings__group">
+      <legend>Automation</legend>
+      <label class="settings__row settings__row--toggle">
+        <span>Automatic start focus</span>
+        <input v-model="settings.autoStartFocus" type="checkbox" />
+      </label>
+      <label class="settings__row settings__row--toggle">
+        <span>Automatic start break</span>
+        <input v-model="settings.autoStartBreak" type="checkbox" />
+      </label>
+    </fieldset>
+
+    <fieldset class="settings__group">
       <legend>Alerts</legend>
       <label class="settings__row settings__row--toggle">
         <span>Play sound</span>

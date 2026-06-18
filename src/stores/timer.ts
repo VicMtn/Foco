@@ -56,9 +56,12 @@ export const useTimerStore = defineStore('timer', () => {
     remainingSecs.value = left
     if (left === 0) {
       stopTicking()
-      if (currentKind.value === 'focus') completedFocusInCycle.value += 1
+      const justFinishedFocus = currentKind.value === 'focus'
+      if (justFinishedFocus) completedFocusInCycle.value += 1
       recordConclusion(true)
       status.value = 'finished'
+      const shouldAutoStart = justFinishedFocus ? settings.autoStartBreak : settings.autoStartFocus
+      if (shouldAutoStart) start()
     }
   }
 
