@@ -50,7 +50,7 @@ const tabs: { key: ViewKey; label: string }[] = [
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --graphite: #312f2f;
+  --graphite: #1d1d1d;
   --cream: #edebd7;
   --accent: #ce8147;
   --surface: var(--cream);
