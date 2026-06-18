@@ -33,7 +33,7 @@ const phase = computed(() => kindLabel(timer.currentKind))
   align-items: center;
   justify-content: center;
   gap: 1.5rem;
-  padding: 0 2rem;
+  padding: 0 1rem;
   color: var(--accent);
 }
 </style>

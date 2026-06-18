@@ -92,11 +92,22 @@ body,
 }
 
 .app__nav {
-  display: flex;
-  gap: 0.25rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   padding: 0.75rem 1rem 0;
-  justify-content: center;
   flex-shrink: 0;
+}
+
+.app__tab:nth-child(1) {
+  justify-self: start;
+}
+
+.app__tab:nth-child(2) {
+  justify-self: center;
+}
+
+.app__tab:nth-child(3) {
+  justify-self: end;
 }
 
 .app__tab {
