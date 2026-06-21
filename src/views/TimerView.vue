@@ -18,6 +18,7 @@ const phase = computed(() => kindLabel(timer.currentKind))
       :status="timer.status"
       @toggle="timer.toggle"
       @reset="timer.reset"
+      @reset-all="timer.resetAll"
       @skip="timer.skip"
     />
   </section>

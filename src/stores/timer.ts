@@ -106,6 +106,13 @@ export const useTimerStore = defineStore('timer', () => {
     status.value = 'idle'
   }
 
+  function resetAll() {
+    stopTicking()
+    startedAt.value = null
+    completedFocusInCycle.value = 0
+    loadKind('focus')
+  }
+
   function advance() {
     stopTicking()
     startedAt.value = null
@@ -138,6 +145,7 @@ export const useTimerStore = defineStore('timer', () => {
     pause,
     toggle,
     reset,
+    resetAll,
     skip,
   }
 })

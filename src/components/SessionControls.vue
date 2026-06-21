@@ -10,8 +10,28 @@ const props = defineProps<{
 const emit = defineEmits<{
   toggle: []
   reset: []
+  resetAll: []
   skip: []
 }>()
+
+const DOUBLE_CLICK_MS = 250
+let resetClickTimer: ReturnType<typeof setTimeout> | null = null
+
+function handleResetClick() {
+  if (resetClickTimer !== null) return
+  resetClickTimer = setTimeout(() => {
+    resetClickTimer = null
+    emit('reset')
+  }, DOUBLE_CLICK_MS)
+}
+
+function handleResetDblClick() {
+  if (resetClickTimer !== null) {
+    clearTimeout(resetClickTimer)
+    resetClickTimer = null
+  }
+  emit('resetAll')
+}
 
 const primaryLabel = computed(() => {
   switch (props.status) {
@@ -34,7 +54,9 @@ const primaryLabel = computed(() => {
       class="controls__btn controls__btn--secondary controls__btn--icon"
       type="button"
       aria-label="Reset"
-      @click="emit('reset')"
+      title="Click to reset phase, double-click for full reset"
+      @click="handleResetClick"
+      @dblclick="handleResetDblClick"
     >
       <RotateCcw :size="18" :stroke-width="2" aria-hidden="true" />
     </button>
