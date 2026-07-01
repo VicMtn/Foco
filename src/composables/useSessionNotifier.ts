@@ -1,12 +1,8 @@
 import { watch } from 'vue'
-import {
-  isPermissionGranted,
-  requestPermission,
-  sendNotification,
-} from '@tauri-apps/plugin-notification'
 import { useSettingsStore } from '../stores/settings'
 import { useTimerStore } from '../stores/timer'
 import type { ConcludedSession } from '../types/timer'
+import { notify } from '../utils/notify'
 import { playCompletionChime } from '../utils/sound'
 
 export function useSessionNotifier() {
@@ -18,7 +14,10 @@ export function useSessionNotifier() {
     (session) => {
       if (!session || !session.completed) return
       if (settings.soundEnabled) safelyChime()
-      if (settings.notificationsEnabled) void notify(session)
+      if (settings.notificationsEnabled) {
+        const { title, body } = buildPayload(session)
+        void notify(title, body)
+      }
     },
   )
 }
@@ -28,16 +27,6 @@ function safelyChime() {
     playCompletionChime()
   } catch (err) {
     console.warn('Audio chime failed', err)
-  }
-}
-
-async function notify(session: ConcludedSession) {
-  try {
-    const granted = (await isPermissionGranted()) || (await requestPermission()) === 'granted'
-    if (!granted) return
-    sendNotification(buildPayload(session))
-  } catch (err) {
-    console.warn('Notification failed', err)
   }
 }
 
