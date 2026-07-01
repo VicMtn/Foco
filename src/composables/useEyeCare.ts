@@ -24,10 +24,7 @@ export function useEyeCare() {
   let intervalId: ReturnType<typeof setInterval> | null = null
 
   const active = computed(
-    () =>
-      settings.eyeCareEnabled &&
-      timer.status === 'running' &&
-      timer.currentKind === 'focus',
+    () => settings.eyeCareEnabled && timer.status === 'running' && timer.currentKind === 'focus',
   )
 
   function elapsedFocusMs(): number {

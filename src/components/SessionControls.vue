@@ -60,11 +60,7 @@ const primaryLabel = computed(() => {
     >
       <RotateCcw :size="18" :stroke-width="2" aria-hidden="true" />
     </button>
-    <button
-      class="controls__btn controls__btn--primary"
-      type="button"
-      @click="emit('toggle')"
-    >
+    <button class="controls__btn controls__btn--primary" type="button" @click="emit('toggle')">
       {{ primaryLabel }}
     </button>
     <button
@@ -107,7 +103,10 @@ const primaryLabel = computed(() => {
   background: transparent;
   color: inherit;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, filter 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    filter 0.15s ease;
 }
 
 .controls__btn--secondary:hover {

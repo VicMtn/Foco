@@ -34,40 +34,23 @@ function dismiss() {
   void getCurrentWindow().close()
 }
 
-const label = computed(() =>
-  state.value === 'ready' ? 'Look 20 feet away' : 'Looking away',
-)
+const label = computed(() => (state.value === 'ready' ? 'Look 20 feet away' : 'Looking away'))
 
 onUnmounted(clearTimer)
 </script>
 
 <template>
   <main class="rest">
-    <div
-      class="rest__bar"
-      role="group"
-      aria-label="Eye care reminder"
-      data-tauri-drag-region
-    >
+    <div class="rest__bar" role="group" aria-label="Eye care reminder" data-tauri-drag-region>
       <span class="rest__icon" aria-hidden="true" data-tauri-drag-region>
         <Eye :size="16" :stroke-width="1.75" />
       </span>
       <span class="rest__label" data-tauri-drag-region>{{ label }}</span>
-      <button
-        v-if="state === 'ready'"
-        class="rest__action"
-        type="button"
-        @click="startCountdown"
-      >
+      <button v-if="state === 'ready'" class="rest__action" type="button" @click="startCountdown">
         Start 20s
       </button>
       <span v-else class="rest__chip" aria-live="polite">{{ remaining }}s</span>
-      <button
-        class="rest__close"
-        type="button"
-        aria-label="Dismiss"
-        @click="dismiss"
-      >
+      <button class="rest__close" type="button" aria-label="Dismiss" @click="dismiss">
         <X :size="14" :stroke-width="2.25" />
       </button>
     </div>
@@ -76,8 +59,7 @@ onUnmounted(clearTimer)
 
 <style>
 :root {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', system-ui,
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', system-ui, sans-serif;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -177,7 +159,9 @@ body,
   cursor: pointer;
   background: var(--accent);
   color: #1d1d1d;
-  transition: filter 0.12s ease, transform 0.12s ease;
+  transition:
+    filter 0.12s ease,
+    transform 0.12s ease;
 }
 
 .rest__action:hover {
@@ -206,7 +190,9 @@ body,
   justify-content: center;
   cursor: pointer;
   opacity: 0.6;
-  transition: background 0.12s ease, opacity 0.12s ease;
+  transition:
+    background 0.12s ease,
+    opacity 0.12s ease;
   flex-shrink: 0;
 }
 

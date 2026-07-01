@@ -125,7 +125,9 @@ body,
   color: inherit;
   opacity: 0.55;
   cursor: pointer;
-  transition: opacity 0.15s ease, background 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    background 0.15s ease;
 }
 
 .app__tab:hover {

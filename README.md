@@ -1,6 +1,6 @@
 # Foco
 
-A native macOS menu-bar Pomodoro app 
+A native macOS menu-bar Pomodoro app
 
 ## Features
 
@@ -16,20 +16,20 @@ A native macOS menu-bar Pomodoro app
 
 ## Stack
 
-| Layer        | Choice                                |
-| ------------ | ------------------------------------- |
-| Native shell | Tauri 2 (Rust)                        |
-| UI           | Vue 3 with TypeScript                 |
-| Bundler      | Vite                                  |
-| State        | Pinia                                 |
-| Persistence  | SQLite via sqlx                       |
-| Charts       | Chart.js                              |
-| Icons        | lucide-vue-next                       |
+| Layer        | Choice                |
+| ------------ | --------------------- |
+| Native shell | Tauri 2 (Rust)        |
+| UI           | Vue 3 with TypeScript |
+| Bundler      | Vite                  |
+| State        | Pinia                 |
+| Persistence  | SQLite via sqlx       |
+| Charts       | Chart.js              |
+| Icons        | lucide-vue-next       |
 
 ## Architecture
 
 ```
-src/                          
+src/
 ├── components/               # presentational components
 ├── views/                    # screens composed of components + stores
 ├── stores/                   # Pinia: timer, settings, stats
@@ -38,14 +38,13 @@ src/
 ├── EyeRestApp.vue            # standalone app mounted in the eye-rest popup window
 └── types/
 
-src-tauri/                   
+src-tauri/
 └── src/
     ├── lib.rs                # plugin , setup, activation policy
     ├── tray.rs               # menu-bar icon, menu, popover toggle
     ├── db.rs                 # SQLite + typed commands
     └── commands.rs           # set_tray_title
 ```
-
 
 ## Run
 

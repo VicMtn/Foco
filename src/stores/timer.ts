@@ -96,7 +96,8 @@ export const useTimerStore = defineStore('timer', () => {
   }
 
   function toggle() {
-    status.value === 'running' ? pause() : start()
+    if (status.value === 'running') pause()
+    else start()
   }
 
   function reset() {
