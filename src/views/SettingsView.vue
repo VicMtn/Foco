@@ -93,7 +93,7 @@ const longBreakMinutes = minutesField(
       <legend>Eye Care</legend>
       <label class="settings__row settings__row--toggle">
         <span>20-20-20 rule</span>
-        <input v-model="settings.developerMode" type="checkbox" />
+        <input v-model="settings.eyeCareEnabled" type="checkbox" />
       </label>
       <p class="settings__hint">
         Every 20 min of focus, look ~20ft (6m) away for 20s to rest your eyes.

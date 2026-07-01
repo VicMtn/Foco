@@ -14,7 +14,7 @@ const DEFAULTS = {
   notificationsEnabled: true,
   autoStartFocus: false,
   autoStartBreak: false,
-  developerMode: false,
+  eyeCareEnabled: false,
 }
 
 export const useSettingsStore = defineStore('settings', () => {
@@ -26,7 +26,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const notificationsEnabled = ref(DEFAULTS.notificationsEnabled)
   const autoStartFocus = ref(DEFAULTS.autoStartFocus)
   const autoStartBreak = ref(DEFAULTS.autoStartBreak)
-  const developerMode = ref(DEFAULTS.developerMode)
+  const eyeCareEnabled = ref(DEFAULTS.eyeCareEnabled)
   const ready = ref(false)
 
   function durationFor(kind: SessionKind): number {
@@ -50,7 +50,12 @@ export const useSettingsStore = defineStore('settings', () => {
     notificationsEnabled.value = readBool(stored, 'notificationsEnabled', DEFAULTS.notificationsEnabled)
     autoStartFocus.value = readBool(stored, 'autoStartFocus', DEFAULTS.autoStartFocus)
     autoStartBreak.value = readBool(stored, 'autoStartBreak', DEFAULTS.autoStartBreak)
-    developerMode.value = readBool(stored, 'developerMode', DEFAULTS.developerMode)
+    // `developerMode` is the legacy key this setting used to be stored under.
+    eyeCareEnabled.value = readBool(
+      stored,
+      'eyeCareEnabled',
+      readBool(stored, 'developerMode', DEFAULTS.eyeCareEnabled),
+    )
     ready.value = true
   }
 
@@ -62,7 +67,7 @@ export const useSettingsStore = defineStore('settings', () => {
   watchPersistableBool('notificationsEnabled', notificationsEnabled, ready)
   watchPersistableBool('autoStartFocus', autoStartFocus, ready)
   watchPersistableBool('autoStartBreak', autoStartBreak, ready)
-  watchPersistableBool('developerMode', developerMode, ready)
+  watchPersistableBool('eyeCareEnabled', eyeCareEnabled, ready)
 
   return {
     focusSecs,
@@ -73,7 +78,7 @@ export const useSettingsStore = defineStore('settings', () => {
     notificationsEnabled,
     autoStartFocus,
     autoStartBreak,
-    developerMode,
+    eyeCareEnabled,
     ready,
     durationFor,
     load,

@@ -1,15 +1,12 @@
-import { onScopeDispose, ref, watch } from 'vue'
-import {
-  isPermissionGranted,
-  requestPermission,
-  sendNotification,
-} from '@tauri-apps/plugin-notification'
+import { computed, onScopeDispose, watch } from 'vue'
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow'
 import { primaryMonitor } from '@tauri-apps/api/window'
 import { useSettingsStore } from '../stores/settings'
 import { useTimerStore } from '../stores/timer'
+import { notify } from '../utils/notify'
 
-const FOCUS_INTERVAL_SECS = 20 * 60
+const FOCUS_INTERVAL_MS = 20 * 60 * 1000
+const POLL_MS = 1000
 const REST_WINDOW_LABEL = 'eye-rest'
 const REST_WIN_W = 460
 const REST_WIN_H = 64
@@ -18,24 +15,41 @@ export function useEyeCare() {
   const settings = useSettingsStore()
   const timer = useTimerStore()
 
-  const elapsedFocusSecs = ref(0)
+  // Accrued focus time is measured from wall-clock samples (Date.now) rather
+  // than by counting interval ticks. The popover webview is hidden most of the
+  // time and its timers get throttled, so a tick counter would badly
+  // under-count; sampling the clock stays accurate even when polls fire late.
+  let bankedMs = 0
+  let runSince: number | null = null
   let intervalId: ReturnType<typeof setInterval> | null = null
 
-  function tick() {
-    if (!settings.developerMode) return
-    if (timer.status !== 'running' || timer.currentKind !== 'focus') return
+  const active = computed(
+    () =>
+      settings.eyeCareEnabled &&
+      timer.status === 'running' &&
+      timer.currentKind === 'focus',
+  )
 
-    elapsedFocusSecs.value += 1
-    if (elapsedFocusSecs.value >= FOCUS_INTERVAL_SECS) {
-      elapsedFocusSecs.value = 0
+  function elapsedFocusMs(): number {
+    return bankedMs + (runSince !== null ? Date.now() - runSince : 0)
+  }
+
+  function resetElapsed() {
+    bankedMs = 0
+    runSince = active.value ? Date.now() : null
+  }
+
+  function poll() {
+    if (!active.value) return
+    if (elapsedFocusMs() >= FOCUS_INTERVAL_MS) {
+      resetElapsed()
       void notify('Time to rest your eyes', 'Look ~20 ft (6 m) away for 20 seconds.')
       void openRestWindow()
     }
   }
 
   function ensureInterval() {
-    if (intervalId !== null) return
-    intervalId = setInterval(tick, 1000)
+    if (intervalId === null) intervalId = setInterval(poll, POLL_MS)
   }
 
   function stopInterval() {
@@ -44,38 +58,48 @@ export function useEyeCare() {
     intervalId = null
   }
 
+  // Open/close the current focus segment as the timer runs, pauses or switches
+  // phase, banking the elapsed wall-clock time of each running segment.
   watch(
-    () => settings.developerMode,
-    (enabled) => {
-      if (enabled) {
+    active,
+    (isActive) => {
+      if (isActive) {
+        runSince = Date.now()
         ensureInterval()
       } else {
-        elapsedFocusSecs.value = 0
+        if (runSince !== null) {
+          bankedMs += Date.now() - runSince
+          runSince = null
+        }
         stopInterval()
-        void closeRestWindow()
       }
     },
     { immediate: true },
   )
 
+  // Leaving focus (break, skip, reset) clears the accrued eye-strain time.
   watch(
     () => timer.currentKind,
     (kind) => {
-      if (kind !== 'focus') elapsedFocusSecs.value = 0
+      if (kind !== 'focus') {
+        bankedMs = 0
+        runSince = null
+      }
+    },
+  )
+
+  // Turning the feature off resets progress and dismisses any open widget.
+  watch(
+    () => settings.eyeCareEnabled,
+    (enabled) => {
+      if (!enabled) {
+        resetElapsed()
+        void closeRestWindow()
+      }
     },
   )
 
   onScopeDispose(stopInterval)
-}
-
-async function notify(title: string, body: string) {
-  try {
-    const granted = (await isPermissionGranted()) || (await requestPermission()) === 'granted'
-    if (!granted) return
-    sendNotification({ title, body })
-  } catch (err) {
-    console.warn('Eye-care notification failed', err)
-  }
 }
 
 async function openRestWindow() {
