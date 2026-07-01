@@ -45,9 +45,17 @@ export const useSettingsStore = defineStore('settings', () => {
     focusSecs.value = readInt(stored, 'focusSecs', DEFAULTS.focusSecs)
     shortBreakSecs.value = readInt(stored, 'shortBreakSecs', DEFAULTS.shortBreakSecs)
     longBreakSecs.value = readInt(stored, 'longBreakSecs', DEFAULTS.longBreakSecs)
-    cyclesBeforeLongBreak.value = readInt(stored, 'cyclesBeforeLongBreak', DEFAULTS.cyclesBeforeLongBreak)
+    cyclesBeforeLongBreak.value = readInt(
+      stored,
+      'cyclesBeforeLongBreak',
+      DEFAULTS.cyclesBeforeLongBreak,
+    )
     soundEnabled.value = readBool(stored, 'soundEnabled', DEFAULTS.soundEnabled)
-    notificationsEnabled.value = readBool(stored, 'notificationsEnabled', DEFAULTS.notificationsEnabled)
+    notificationsEnabled.value = readBool(
+      stored,
+      'notificationsEnabled',
+      DEFAULTS.notificationsEnabled,
+    )
     autoStartFocus.value = readBool(stored, 'autoStartFocus', DEFAULTS.autoStartFocus)
     autoStartBreak.value = readBool(stored, 'autoStartBreak', DEFAULTS.autoStartBreak)
     // `developerMode` is the legacy key this setting used to be stored under.
@@ -85,10 +93,15 @@ export const useSettingsStore = defineStore('settings', () => {
   }
 })
 
+const PERSIST_DEBOUNCE_MS = 300
+
 function watchPersistableNumber(key: string, value: Ref<number>, ready: Ref<boolean>) {
+  // Number fields fire on every keystroke, so collapse a burst of edits into a
+  // single DB write instead of one round-trip per character.
+  const write = debounced(key)
   watch(value, (v) => {
     if (!ready.value) return
-    void persist(key, String(v))
+    write(String(v))
   })
 }
 
@@ -97,6 +110,17 @@ function watchPersistableBool(key: string, value: Ref<boolean>, ready: Ref<boole
     if (!ready.value) return
     void persist(key, v ? 'true' : 'false')
   })
+}
+
+function debounced(key: string) {
+  let timer: ReturnType<typeof setTimeout> | null = null
+  return (value: string) => {
+    if (timer !== null) clearTimeout(timer)
+    timer = setTimeout(() => {
+      timer = null
+      void persist(key, value)
+    }, PERSIST_DEBOUNCE_MS)
+  }
 }
 
 async function persist(key: string, value: string) {
